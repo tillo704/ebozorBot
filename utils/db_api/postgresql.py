@@ -41,16 +41,32 @@ class Database:
                     result = await connection.execute(command, *args)
             return result
 
-    async def create_table_users(self):
+    async def create_table_cats(self):
         sql = """
-        CREATE TABLE IF NOT EXISTS Users (
+        CREATE TABLE IF NOT EXISTS cats (
         id SERIAL PRIMARY KEY,
-        full_name VARCHAR(255) NOT NULL,
-        username varchar(255) NULL,
-        telegram_id BIGINT NOT NULL UNIQUE
+        title VARCHAR(255) NOT NULL UNIQUE,
+        description varchar(255) NULL,
+        image_url VARCHAR(255) NOT NULL 
         );
         """
         await self.execute(sql, execute=True)
+
+    
+    async def create_table_praducts(self):
+        sql = """
+        CREATE TABLE IF NOT EXISTS praducts (
+        id SERIAL PRIMARY KEY,
+        title VARCHAR(255) NOT NULL UNIQUE,
+        description varchar(255) NOT NULL,
+        image_url VARCHAR(255) NOT NULL,
+        price NUMERIC NOT NULL,
+        cat_id INTEGER NOT NULL 
+        );
+        """
+        await self.execute(sql, execute=True)
+
+
 
     @staticmethod
     def format_args(sql, parameters: dict):
@@ -62,6 +78,10 @@ class Database:
     async def add_user(self, full_name, username, telegram_id):
         sql = "INSERT INTO users (full_name, username, telegram_id) VALUES($1, $2, $3) returning *"
         return await self.execute(sql, full_name, username, telegram_id, fetchrow=True)
+    
+    async def add_cat(self, title, description, image_url):
+        sql = "INSERT INTO Cats ( title, description, image_url) VALUES($1, $2, $3) returning *"
+        return await self.execute(sql, title, description, image_url, fetchrow=True)
 
     async def select_all_users(self):
         sql = "SELECT * FROM Users"
