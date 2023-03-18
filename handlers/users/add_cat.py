@@ -1,0 +1,42 @@
+from aiogram import types
+from data.config import ADMINS
+from loader import dp, db, bot
+from aiogram.dispatcher import FSMContext
+from states.admin import AddCategory
+
+
+
+
+@dp.message_handler(text="/add_cat", user_id=ADMINS)
+async def add_cat_func(message: types.Message):
+   await message.answer("Qoshmoqchi bo'lgan kategoriya nomini kiriting ⬇️ !")
+   await AddCategory.title.set()
+
+
+@dp.message_handler(user_id=ADMINS,state=AddCategory.title)
+async def get_cat_title(message: types.Message, state: FSMContext):
+   cat_title = message.text
+   await state.update_data({"cat_title": cat_title})
+   await message.answer("📰 Kategoryada nimalar bo'lishi haqida ma'lumot kiriting!")
+   await AddCategory.next()
+
+@dp.message_handler(user_id=ADMINS,state=AddCategory.desc)
+async def get_cat_desc(message: types.Message, state: FSMContext):
+   cat_desc = message.text
+   await state.update_data({"cat_desc": cat_desc})
+   await message.answer("Kategoriya rasmini yuboring !")
+   await AddCategory.next()
+    
+
+
+@dp.message_handler(content_types=["photo"],user_id=ADMINS,state=AddCategory.image)
+async def get_cat_image(message: types.Message, state: FSMContext):
+   cat_image = message.photo[-1].file_id
+   await state.update_data({"cat_image_id": cat_image})
+   data = await state.get_data()
+   title = data.get("cat_title")
+   desc = data.get("cat_desc")
+   
+   await db.add_cat(title=title,description=desc,image_url=cat_image)
+   await message.answer("Kategorya saqlandi!")
+   await AddCategory.next()
