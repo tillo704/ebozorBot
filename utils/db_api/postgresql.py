@@ -82,15 +82,37 @@ class Database:
     async def add_cat(self, title, description, image_url):
         sql = "INSERT INTO Cats ( title, description, image_url) VALUES($1, $2, $3) returning *"
         return await self.execute(sql, title, description, image_url, fetchrow=True)
+    
+    async def add_praduct(self, title, description, image_url,price,cat_id):
+        sql = "INSERT INTO Praducts ( title, description, image_url,price,cat_id) VALUES($1, $2, $3, $4, $5) returning *"
+        return await self.execute(sql, title, description, image_url, price,cat_id ,fetchrow=True)
+
 
     async def select_all_users(self):
         sql = "SELECT * FROM Users"
+        return await self.execute(sql, fetch=True)
+    
+    async def select_all_cats(self):
+        sql = "SELECT * FROM Cats"
         return await self.execute(sql, fetch=True)
 
     async def select_user(self, **kwargs):
         sql = "SELECT * FROM Users WHERE "
         sql, parameters = self.format_args(sql, parameters=kwargs)
         return await self.execute(sql, *parameters, fetchrow=True)
+
+    async def select_category(self, **kwargs):
+        sql = "SELECT * FROM Cats WHERE "
+        sql, parameters = self.format_args(sql, parameters=kwargs)
+        return await self.execute(sql, *parameters, fetchrow=True)
+    
+
+    async def select_product(self, **kwargs):
+        sql = "SELECT * FROM Praducts WHERE "
+        sql, parameters = self.format_args(sql, parameters=kwargs)
+        return await self.execute(sql, *parameters, fetch=True)
+
+
 
     async def count_users(self):
         sql = "SELECT COUNT(*) FROM Users"
@@ -102,6 +124,9 @@ class Database:
 
     async def delete_users(self):
         await self.execute("DELETE FROM Users WHERE TRUE", execute=True)
+   
+    async def delete_cats(self):
+        await self.execute("DELETE FROM Cats WHERE TRUE", execute=True)
 
     async def drop_users(self):
         await self.execute("DROP TABLE Users", execute=True)
