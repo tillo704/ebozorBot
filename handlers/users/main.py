@@ -26,24 +26,27 @@ async def get_product(message: types.Message,state : FSMContext):
   product_title = message.text
   data= await state.get_data()
   cat_id = data.get('cat_id')
-  products = await db.select_product(title =product_title,cat_id=cat_id)
-  product =products[0]
-  msg = f"( <b>{product['title']}</b> \nNarxi: <i>{product['price']}</i>\n\n {product['description']})"
-  await state.update_data({"prod_title":product['title'], 'prod_price':product['price']})
-  await message.answer_photo(photo=product["image_url"],caption=msg,reply_markup=numbers)
-  await ShopState.next()
+  products = await db.select_product(title=product_title,cat_id=cat_id)
+  if products:
+    product =products[0]
+    msg = f"( <b>{product['title']}</b> \nNarxi: <i>{product['price']}</i>\n\n {product['description']})"
+    await state.update_data({"prod_title":product['title'], 'prod_price':product['price']})
+    await message.answer_photo(photo=product["image_url"],caption=msg,reply_markup=numbers)
+    await ShopState.next()
+  else:
+    await message.answer("Mahsulot yo'q")
 
 
 
 
 
-@dp.message_handler(lambda message : int(message.text)> 0 , state=ShopState.quantity)
-async def get_quentity(message: types.Message , state : FSMContext):
+@dp.message_handler(state=ShopState.quantity)
+async def get_quentity(message: types.Message , state: FSMContext):
   data = await state.get_data()
   title = data.get("prod_title")
   price = data.get("prod_price")
-  msg = f"{title} ({price}$) x {message.text} = {int(message.text) * price} "
-  await message.answer_photo(msg,reply_markup=main_menu_markup(str(message.from_user.id)))
+  msg = f"{title} ({price}$) x {message.text} = {int(message.text) * int(price)} "
+  await message.answer(msg, reply_markup=main_menu_markup(str(message.from_user.id)))
   await state.finish()
 
 
