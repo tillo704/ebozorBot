@@ -37,3 +37,8 @@ async def send_ad_to_all(message: types.Message):
 async def get_all_users(message: types.Message):
     await db.delete_users()
     await message.answer("Baza tozalandi!")
+
+@dp.message_handler(text="/cleandbcats", user_id=ADMINS) 
+async def get_all_cats(message: types.Message):
+    await db.delete_cats()
+    await message.answer("Baza tozalandi!")
