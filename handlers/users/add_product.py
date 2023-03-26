@@ -19,6 +19,7 @@ async  def add_new_product_cmd(message: types.Message):
 async def get_product_id(call: types.CallbackQuery,state: FSMContext):
     cat = await db.select_category(title=call.data)
     cat_id = cat.get("id")
+   
     await state.update_data({"cat_id": cat_id})
     await call.message.delete()
     await call.message.answer("Qo'shmoqchi bo'lgan maxsulotingiz nomini kiriting!")

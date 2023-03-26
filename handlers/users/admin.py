@@ -42,3 +42,7 @@ async def get_all_users(message: types.Message):
 async def get_all_cats(message: types.Message):
     await db.delete_cats()
     await message.answer("Baza tozalandi!")
+
+
+
+
