@@ -104,11 +104,11 @@ class Database:
     
 
     async def create_cart(self, user_id):
-        sql = "INSERT INTO Carts ( user_id) VALUES($1) returning *"
+        sql = "INSERT INTO Carts (user_id, ) VALUES($1, ) returning *"
         return await self.execute(sql, user_id, fetchrow=True)
     
     async def add_cart_item(self, cart_id,product_id,quantity):
-        sql = "INSERT INTO Items ( cart_id,product_id,quantity) VALUES($1,$2,$3) returning *"
+        sql = "INSERT INTO Items (cart_id,product_id,quantity) VALUES($1,$2,$3) returning *"
         return await self.execute(sql, cart_id,product_id,quantity, fetchrow=True)
 
     
@@ -144,7 +144,8 @@ class Database:
     async def select_user_cart_items(self, **kwargs):
         sql = "SELECT * FROM Items WHERE "
         sql, parameters = self.format_args(sql, parameters=kwargs)
-        return await self.execute(sql, *parameters,fetch=True)
+        sql += f" ORDER BY product_id;"
+        return await self.execute(sql, *parameters, fetch=True)
 
     async def select_category(self, **kwargs):
         sql = "SELECT * FROM Cats WHERE "
@@ -171,6 +172,17 @@ class Database:
         sql = "UPDATE Items SET quantity=$1 WHERE cart_id=$2 AND product_id=$3"
         return await self.execute(sql, quantity,cart_id,product_id, execute=True)
     
+
+    async def delete_cart_item(self,cart_id,product_id):
+        sql = "DELETE FROM Items WHERE cart_id=$1 AND product_id=$2"
+        await self.execute(sql,cart_id,product_id, execute=True)
+        
+
+    async def clear_cart(self,cart_id):
+        sql = "DELETE FROM Items WHERE cart_id=$1"
+        await self.execute(sql,cart_id, execute=True)
+        
+
     async def delete_users(self):
         await self.execute("DELETE FROM Users WHERE TRUE", execute=True)
    
