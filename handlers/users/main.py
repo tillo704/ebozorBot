@@ -33,7 +33,6 @@ async def get_product(message: types.Message,state : FSMContext):
   cat_id = data.get('cat_id')
   praducts = await db.select_product(title=product_title,cat_id=cat_id)  
   product =praducts[0]
-  print(product)
   msg = f"( <b>{product['title']}</b> \nNarxi: <i>{product['price']}</i>\n\n {product['description']})"
   await state.update_data({"prod_id" : product["id"],"prod_title":product['title'], 'prod_price':product['price']})
   await message.answer_photo(photo=product["image_url"],caption=msg,reply_markup=numbers)

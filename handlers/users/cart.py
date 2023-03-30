@@ -2,13 +2,15 @@ from aiogram import types
 from loader import dp, db, bot
 from keyboards.inline.cart import make_cart_items
 from keyboards.default.main import make_cats_markup
+from aiogram.dispatcher import FSMContext
 
-@dp.message_handler(text="🛒 Savatcha" , state= "*")
-async def get_cart_items(message: types.Message):
+@dp.message_handler(text="🛒 Savatcha" , state="*")
+async def get_cart_items(message: types.Message, state: FSMContext):
     user = await db.select_user(telegram_id = message.from_user.id)
     cart = await db.select_user_cart(user_id = user["id"])
-    resualt = await make_cart_items(cart_id=cart["id"])
-    await message.answer(text=resualt[1],reply_markup=resualt[0])
+    result = await make_cart_items(cart_id=cart["id"])
+    message = await message.answer(text=result[1],reply_markup=result[0])
+    await state.update_data({"message":message, "total_price": result[2]}) 
 
 @dp.callback_query_handler(text="clear_cart",state= "*")
 async def clear_cart_items(call : types.CallbackQuery):
@@ -31,14 +33,12 @@ async def update_cart_items(call : types.CallbackQuery):
         quantity = chack_product["quantity"]
         if action == "plus":
             await db.update_cart_item(cart_id=cart["id"] , product_id=product_id , quantity=quantity + 1)
-
+            
         elif action == "minus":
             await db.update_cart_item(cart_id=cart["id"] , product_id=product_id , quantity=quantity - 1)
         elif action == 'delete':
             await db.delete_cart_item(cart_id=cart["id"],product_id=product_id)
-    resualt = await make_cart_items(cart_id=cart["id"])
+    resualt = await make_cart_items(cart_id=cart["id"]) 
     await call.message.edit_text(text=resualt[1],reply_markup=resualt[0])  
-
-    pass  
     
 
