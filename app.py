@@ -5,16 +5,16 @@ import middlewares, filters, handlers
 from utils.notify_admins import on_startup_notify
 from utils.set_bot_commands import set_default_commands
 
-
+ 
 async def on_startup(dispatcher):
     # Ma'lumotlar bazasini yaratamiz:
     await db.create()
     # await db.drop_users()
-    # await db.create_table_users()
-    # await db.create_table_cats()
-    # await db.create_table_praducts()
-    # await db.create_table_carts()
-    # await db.create_table_cart_items()
+    await db.create_table_users()
+    await db.create_table_cats()
+    await db.create_table_praducts()
+    await db.create_table_carts()
+    await db.create_table_cart_items()
     await db.create_table_order()
     await db.create_table_order_items()
     

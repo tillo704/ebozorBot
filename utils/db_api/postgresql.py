@@ -142,7 +142,7 @@ class Database:
     
 
     async def create_cart(self, user_id):
-        sql = "INSERT INTO Carts (user_id, ) VALUES($1, ) returning *"
+        sql = "INSERT INTO Carts (user_id) VALUES ($1) returning *"
         return await self.execute(sql, user_id, fetchrow=True)
     
     async def add_order(self, user_id,total_price):
@@ -189,7 +189,7 @@ class Database:
         return await self.execute(sql, *parameters,fetchrow=True)
     
     async def select_user_cart_items(self, **kwargs):
-        sql = "SELECT * FROM Items WHERE "
+        sql = "SELECT * FROM Items WHERE quantity > 0 AND "
         sql, parameters = self.format_args(sql, parameters=kwargs)
         sql += f" ORDER BY product_id;"
         return await self.execute(sql, *parameters, fetch=True)

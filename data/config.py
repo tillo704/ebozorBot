@@ -17,4 +17,4 @@ DB_HOST = env.str("DB_HOST")
 
 
 
-CHANNELS =["@clay704", "@best704"]
+CHANNELS =["@clay704","@best704"]

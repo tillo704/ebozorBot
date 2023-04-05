@@ -41,8 +41,7 @@ async def bot_start(message: types.Message, state : FSMContext):
             chat = await bot.get_chat(channel)
             invite_link = await chat.export_invite_link()        
             channels_format +=f"👉 <a href='{invite_link}'><b>{chat.title}</b></a>\n "
-            print(invite_link)
-        
+                    
         await message.answer(f"Ushbu qanallarga obuna bo'ling:\n"
                             f"{channels_format}",
                             reply_markup=check_button,

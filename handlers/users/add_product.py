@@ -56,7 +56,7 @@ async def get_price(message: types.Message, state=FSMContext):
    title = data.get("praduct_title")
    description = data.get("praduct_desc")
    image_id = data.get("praduct_image_id")
-   # await db.add_praduct(title=title,description=description,image_url=image_id,price=price,cat_id=cat_id)
+   await db.add_praduct(title=title,description=description,image_url=image_id,price=price,cat_id=cat_id)
    await message.answer("Maxsulot saqlandi!",reply_markup=main_menu_markup(str(message.from_user.id)))
    await state.finish()
     
