@@ -7,7 +7,7 @@ from keyboards.default.main import main_menu_markup
 
 
 
-@dp.message_handler(text="🗂 Kategorya qo'shish! !",user_id=ADMINS)
+@dp.message_handler(text="🗂 Kategorya qo'shish!",user_id=ADMINS)
 @dp.message_handler(text="/add_cat", user_id=ADMINS)
 async def add_cat_func(message: types.Message):
    await message.answer("Qoshmoqchi bo'lgan kategoriya nomini kiriting ⬇️ !")
